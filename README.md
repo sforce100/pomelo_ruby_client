@@ -22,17 +22,17 @@ Or install it yourself as:
 require 'pomelo_client'
 
 p 'test start'
-$client = PomeloClient::Client.new('127.0.0.1', '3014')
-$client.request('gate.gateHandler.queryEntry', { uid: 1, rid: 1 }) do |msg|
-  $client.close
-  $client = PomeloClient::Client.new(msg['host'], msg['port'])
-  $client.request('connector.entryHandler.enter', { auth_token: '99832fb54a0d602897ce4ce5ed4400d4'}) do |message|
-    $client.on('onChat') do |m|
-      Rails.logger.info m
+client = PomeloClient::Client.new('127.0.0.1', '3014')
+client.request('gate.gateHandler.queryEntry', { uid: 1, rid: 1 }) do |msg|
+  client.close
+  client = PomeloClient::Client.new(msg['host'], msg['port'])
+  client.request('connector.entryHandler.enter', { auth_token: '99832fb54a0d602897ce4ce5ed4400d4'}) do |message|
+    client.on('onChat') do |m|
+      p m
     end
 
-    $client.request("chat.chatHandler.send", { content: 'xxoo', from: 'xingxing', type: 'text', gender: '1' }) do |mm|
-      Rails.logger.info mm
+    client.request("chat.chatHandler.send", { content: 'xxoo', from: 'xingxing', type: 'text', gender: '1' }) do |mm|
+      p mm
     end
   end
 end
