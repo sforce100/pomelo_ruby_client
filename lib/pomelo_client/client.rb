@@ -1,8 +1,8 @@
 
 require 'SocketIO'
-require 'logging'
+# require 'logging'
 require 'json'
-require 'debugger'
+# require 'debugger'
 require "#{File.dirname(__FILE__)}/protocol"
 
 module PomeloClient
@@ -36,6 +36,7 @@ module PomeloClient
             emit("disconnect", nil)
             @socket = nil
           end
+
           on_disconnect do
             p 'connection is terminated.'
             @socket = nil
@@ -44,6 +45,11 @@ module PomeloClient
           on_heartbeat do
             p 'on_heartbeat...'
           end
+
+          # on_message do |message|
+          #   p "pomelo send message of string : #{message}" 
+          #   process_message(message)            
+          # end
         end
       end
 
@@ -75,12 +81,14 @@ module PomeloClient
     def process_message(data)
       hash_data = JSON.parse(data)
       id = hash_data['id']
+      p "process_message id:#{id}"
       if id != nil
         # request message
         id = id.to_i
-        cb = cbs[id]
+        cb = @cbs[id]
+        p "process_message cb:#{cb}"
         cb.call(hash_data['body'])
-        cbs.delete(id)
+        @cbs.delete(id)
       else
         # broadcast message
         emit(hash_data['route'], hash_data)
